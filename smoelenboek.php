@@ -24,8 +24,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-//$db_prefix = 'wp_';
-$db_prefix = 'yl3k_';
+$db_prefix = 'wp_';
+//$db_prefix = 'yl3k_';
 
 function vgbsm_get_userids_query( $selectfield, $selectvalues ) {
 	$groups       = explode( ',', $selectvalues );
@@ -36,6 +36,26 @@ function vgbsm_get_userids_query( $selectfield, $selectvalues ) {
 	         "where meta_key = '" . $selectfield . "' AND meta_value in (" . $group_string . ")";
 
 	return $query;
+}
+
+function vgbsm_flatten($userData) {
+	$returnArray = [];
+	if ( $userData ) {
+		foreach ( $userData as $userStdObj ) {
+			foreach ( $userStdObj as $key => $userID ) {
+				$user_data              = get_user_meta( $userID );
+				$userArray = array(
+					'id'         => $userID,
+					'bio'        => $user_data['description'][0],
+					'first_name' => $user_data['first_name'][0],
+					'last_name'  => $user_data['last_name'][0],
+					'avatar_url' => get_avatar_url( $userID )
+				);
+				$returnArray[ $userID ] = $userArray;
+			}
+		}
+	}
+	return $returnArray;
 }
 
 function vgbsm_smoelenboek_grid( $attrs ) {
@@ -55,31 +75,32 @@ function vgbsm_smoelenboek_grid( $attrs ) {
 <div class="smoelenboek">
 GRIDSTART;
 
-	if ($userIDs) {
-		foreach ( $userIDs as $userStdObj ) {
-			foreach ($userStdObj as $key => $userID) {
-				$user_data = get_user_meta($userID);
-				$output .= "<div class='user'>";
-					$bio = $user_data['description'][0];
-					$first_name = $user_data['first_name'][0];
-					$last_name = $user_data['last_name'][0];
-					$avatar_url = get_avatar_url($userID);
-					if ($bio) {
-						$output .= "<div class='avatar'><a href='/koorlid?uid=$userID'><img alt='avatar' src='$avatar_url'/></a></div>";
-					} else {
-						$output .= "<div class='avatar'><img alt='avatar' src='$avatar_url'/></div>";
-					}
-					$output .= "<div class='name'>$first_name $last_name</div>";
-				$output .= "</div>";
-			}
+	$userIDs = vgbsm_flatten($userIDs);
+	usort($userIDs, "compare_first_name");
+	foreach ($userIDs as $userID => $user_data) {
+		$avatar_url = $user_data['avatar_url'];
+		$first_name = $user_data['first_name'];
+		$last_name = $user_data['last_name'];
+		$user_id = $user_data['id'];
+		$output .= "<div class='user'>";
+		if ($user_data["bio"]) {
+			$output .= "<div class='avatar'><a href='/koorlid?uid=$user_id'><img alt='avatar' src='$avatar_url'/></a></div>";
+		} else {
+			$output .= "<div class='avatar'><img alt='avatar' src='$avatar_url'/></div>";
 		}
-
+		$output .= "<div class='name'>$first_name $last_name</div>";
+		$output .= "</div>";
 	}
+
 	$output .= <<<GRIDEND
 </div>
 GRIDEND;
 
 	return $output;
+}
+
+function compare_first_name($a, $b) {
+	return strcmp($a["first_name"], $b["first_name"]);
 }
 
 add_shortcode( 'smoelenboek-grid', 'vgbsm_smoelenboek_grid' );
