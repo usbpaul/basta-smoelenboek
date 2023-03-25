@@ -93,10 +93,10 @@ function vgbsm_smoelenboek_detail( $attrs ) {
 	$avatar_url = get_avatar_url($uid);
 	$output = <<<USERDETAIL
 <div class="userdetail">
-	<div class="backlink"><a href="/smoelenboek">Terug naar het smoelenboek.</a></div>
 	<div class="username">$first_name $last_name</div>
 	<div class='avatar'><img alt='avatar' src='$avatar_url'/></div>
 	<div class='bio'>$bio</div>
+	<div class="backlink"><a href="/smoelenboek">Terug naar het smoelenboek.</a></div>
 </div>
 USERDETAIL;
 	return $output;

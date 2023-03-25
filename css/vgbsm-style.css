@@ -16,6 +16,21 @@ div.smoelenboek {
 div.name {
     text-align: center;
 }
+div.username {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: gray;
+    text-align: center;
+}
+div.bio, div.backlink {
+    max-width: 520px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+div.userdetail div {
+    padding: 1em;
+}
 /* Met 16px als standaard font-size voor <html> is 20em == 320px */
 @media screen and (min-width: 20em) {
     div.smoelenboek {
