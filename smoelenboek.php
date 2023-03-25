@@ -23,3 +23,94 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
+//$db_prefix = 'wp_';
+$db_prefix = 'yl3k_';
+
+function vgbsm_get_userids_query( $selectfield, $selectvalues ) {
+	$groups       = explode( ',', $selectvalues );
+	$group_string = implode( "','", $groups );
+	$group_string = "'" . $group_string . "'";
+	global $db_prefix;
+	$query = "SELECT user_id FROM `${db_prefix}usermeta` " .
+	         "where meta_key = '" . $selectfield . "' AND meta_value in (" . $group_string . ")";
+
+	return $query;
+}
+
+function vgbsm_smoelenboek_grid( $attrs ) {
+	extract( shortcode_atts(
+		array(
+			'selectfield'  => 'Unkown_field',
+			'selectvalues' => 'Unknown Group',
+			'display'      => 'table',
+			'fields'       => ''
+		), $attrs
+	) );
+	global $wpdb;
+	$query = vgbsm_get_userids_query( $selectfield, $selectvalues );
+	$userIDs = $wpdb->get_results( $query );
+
+	$output = <<<GRIDSTART
+<div class="smoelenboek">
+GRIDSTART;
+
+	if ($userIDs) {
+		foreach ( $userIDs as $userStdObj ) {
+			foreach ($userStdObj as $key => $userID) {
+				$user_data = get_user_meta($userID);
+				$output .= "<div class='user'>";
+					$bio = $user_data['description'][0];
+					$first_name = $user_data['first_name'][0];
+					$last_name = $user_data['last_name'][0];
+					$avatar_url = get_avatar_url($userID);
+					if ($bio) {
+						$output .= "<div class='avatar'><a href='/koorlid?uid=$userID'><img alt='avatar' src='$avatar_url'/></a></div>";
+					} else {
+						$output .= "<div class='avatar'><img alt='avatar' src='$avatar_url'/></div>";
+					}
+					$output .= "<div class='name'>$first_name $last_name</div>";
+				$output .= "</div>";
+			}
+		}
+
+	}
+	$output .= <<<GRIDEND
+</div>
+GRIDEND;
+
+	return $output;
+}
+
+add_shortcode( 'smoelenboek-grid', 'vgbsm_smoelenboek_grid' );
+
+function vgbsm_smoelenboek_detail( $attrs ) {
+	$uid = $_GET['uid'];
+	$user_data = get_user_meta($uid);
+	$bio = $user_data['description'][0];
+	$first_name = $user_data['first_name'][0];
+	$last_name = $user_data['last_name'][0];
+	$avatar_url = get_avatar_url($uid);
+	$output = <<<USERDETAIL
+<div class="userdetail">
+	<div class="backlink"><a href="/smoelenboek">Terug naar het smoelenboek.</a></div>
+	<div class="username">$first_name $last_name</div>
+	<div class='avatar'><img alt='avatar' src='$avatar_url'/></div>
+	<div class='bio'>$bio</div>
+</div>
+USERDETAIL;
+	return $output;
+}
+
+add_shortcode( 'smoelenboek-detail', 'vgbsm_smoelenboek_detail' );
+
+add_action( 'init', 'vgbsm_register_script' );
+function vgbsm_register_script() {
+//	wp_register_script( 'vgbsm_script', plugins_url('/js/vgbsm-script.js', __FILE__), array('jquery'), '2.5.1' );
+	wp_register_style( 'vgbsm_style', plugins_url( '/css/vgbsm-style.css', __FILE__ ), false, '1.0.0', 'all' );
+}
+add_action( 'wp_enqueue_scripts', 'vgbsm_enqueue_style' );
+function vgbsm_enqueue_style() {
+//	wp_enqueue_script('vgbsm_script');
+	wp_enqueue_style( 'vgbsm_style' );
+}

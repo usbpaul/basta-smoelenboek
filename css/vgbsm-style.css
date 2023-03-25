@@ -1,0 +1,58 @@
+div.smoelenboek {
+    display: grid;
+    gap: 0px 0px;
+    grid-template-columns: auto
+}
+.avatar img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 50%;
+    min-width: 12em;
+    height: 12em;
+    object-fit: cover;
+    object-position: 50% 50%;
+}
+div.name {
+    text-align: center;
+}
+/* Met 16px als standaard font-size voor <html> is 20em == 320px */
+@media screen and (min-width: 20em) {
+    div.smoelenboek {
+        display: grid;
+        gap: 0px 0px;
+        grid-template-columns: auto
+    }
+    .avatar img {
+        border-radius: 50%;
+        min-width: 12em;
+        height: 12em;
+        object-fit: cover;
+        object-position: 50% 50%;
+    }
+}
+/* Met 16px als standaard font-size voor <html> is 30em == 480px */
+@media screen and (min-width: 30em) {
+    div.smoelenboek {
+        gap: 40px 10px;
+        grid-template-columns: auto auto;
+    }
+}
+/* Met 16px als standaard font-size voor <html> is 48em == 768px */
+@media screen and (min-width: 48em) {
+    div.smoelenboek {
+        grid-template-columns: auto auto auto;
+    }
+}
+/* Met 16px als standaard font-size voor <html> is 67em == 1072px */
+@media screen and ( min-width: 67em ) {
+    div.smoelenboek {
+        grid-template-columns: auto auto auto;
+    }
+}
+/* Met 16px als standaard font-size voor <html> is 79em == 1267px */
+@media screen and ( min-width: 79em ) {
+    div.smoelenboek {
+        grid-template-columns: auto auto auto auto;
+    }
+}
