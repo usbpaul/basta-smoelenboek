@@ -31,6 +31,17 @@ div.bio, div.backlink {
 div.userdetail div {
     padding: 1em;
 }
+#smoelenboek-uitleg {
+    width: 100%;
+    margin-bottom: 30px;
+}
+#smoelenboek-uitleg div {
+    padding: 0.5em;
+}
+#uitleg {
+    background-color: lightblue;
+}
+
 /* Met 16px als standaard font-size voor <html> is 20em == 320px */
 @media screen and (min-width: 20em) {
     div.smoelenboek {
