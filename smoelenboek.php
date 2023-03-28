@@ -48,13 +48,19 @@ function vgbsm_flatten($userData) {
 					'id'         => $userID,
 					'bio'        => $user_data['description'][0],
 					'first_name' => $user_data['first_name'][0],
-					'last_name'  => $user_data['last_name'][0]
+					'last_name'  => fix_lastname($user_data['last_name'][0])
 				);
 				$returnArray[ $userID ] = $userArray;
 			}
 		}
 	}
 	return $returnArray;
+}
+
+function fix_lastname($lastname) {
+	$pattern = '/(.*), (de|van)/i';
+	$replacement = '${2} ${1}';
+	return preg_replace($pattern, $replacement, $lastname);
 }
 
 function vgbsm_smoelenboek_grid( $attrs ) {
